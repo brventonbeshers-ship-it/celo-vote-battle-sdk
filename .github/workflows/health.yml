@@ -1,0 +1,47 @@
+name: Package Health Check
+
+on:
+  schedule:
+    - cron: '45 * * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create clean environment
+        run: |
+          mkdir health-check && cd health-check
+          npm init -y
+
+      - name: Install celo-vote-battle-sdk
+        working-directory: health-check
+        run: npm install celo-vote-battle-sdk
+        continue-on-error: true
+
+      - name: Verify package loads correctly
+        working-directory: health-check
+        run: |
+          node -e "
+            const sdk = require('celo-vote-battle-sdk');
+            console.log('Package loaded successfully');
+            console.log('Type:', typeof sdk);
+            console.log('Keys:', Object.keys(sdk));
+          "
+        continue-on-error: true
+
+      - name: Check npm registry availability
+        run: npm view celo-vote-battle-sdk version
+        continue-on-error: true
+
+      - name: Inspect dependency tree
+        working-directory: health-check
+        run: npm ls --all
+        continue-on-error: true
