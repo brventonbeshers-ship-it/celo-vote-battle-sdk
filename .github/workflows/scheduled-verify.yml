@@ -1,0 +1,37 @@
+name: Scheduled Verify
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '35 */8 * * *'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Verify celo-vote-battle-sdk from npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Prepare clean environment
+        run: mkdir -p /tmp/celo-vote-battle-sdk-check
+
+      - name: Initialize project
+        working-directory: /tmp/celo-vote-battle-sdk-check
+        run: npm init -y
+
+      - name: Install celo-vote-battle-sdk from registry
+        working-directory: /tmp/celo-vote-battle-sdk-check
+        run: npm install celo-vote-battle-sdk
+
+      - name: Verify module loads
+        working-directory: /tmp/celo-vote-battle-sdk-check
+        run: node -e "const sdk = require('celo-vote-battle-sdk'); console.log('celo-vote-battle-sdk OK, exports:', Object.keys(sdk));"
+
+      - name: Show dependency tree
+        working-directory: /tmp/celo-vote-battle-sdk-check
+        run: npm ls --all
