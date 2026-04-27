@@ -1,6 +1,6 @@
 {
   "name": "celo-vote-battle-sdk",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "SDK for CeloVoteBattle - on-chain A vs B voting polls on Celo blockchain",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
